@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>卫星地图</title>
+<style type="text/css">
+html,body{
+    width:100%;
+    height:100%;
+}
+#container{
+    width:100%;
+    height:90%;
+}
+*{
+    margin:0px;
+    padding:0px;
+}
+body, button, input, select, textarea {
+    font: 12px/16px Verdana, Helvetica, Arial, sans-serif;
+}
+p{
+    width:603px;
+    padding-top:3px;
+    overflow:hidden;
+}
+
+.btn{
+    width:100px;
+    height:26px
+}
+</style>
+<script charset="utf-8" src="https://map.qq.com/api/js?v=2.exp&key=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77"></script>
+<script>
+var map;
+function init() {
+    map = new qq.maps.Map(document.getElementById("container"), {
+
+    /*
+        MapTypeId的显示类型
+        ROADMAP	该地图类型显示普通的街道地图。
+        SATELLITE	该地图类型显示卫星图像。
+        HYBRID	该地图类型显示卫星图像上的主要街道透明层。
+
+    */
+
+    //通过mapTypeId来设置卫星地图样式
+        mapTypeId:qq.maps.MapTypeId.SATELLITE,
+        // 地图的中心地理坐标。
+        center: new qq.maps.LatLng(39.916527,116.397128),
+        zoomLevel:14
+    });
+}
+</script>
+</head>
+<body onload="init();">
+<div id="container"></div>
+<p>初始化卫星地图。</p>
+</body>
+</html>

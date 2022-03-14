@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>本地瓦片数据测试</title>
+    <link rel="stylesheet" href="../v6.13.0-dist/ol.css" />
+    <style>
+        #map {
+            width: 100%;
+            height: 400px;
+        }
+
+        #myposition,
+        #myproj {
+            float: left;
+            position: relative;
+            bottom: 0px;
+            width: 400px;
+            height: 10px;
+            z-index: 1000;
+        }
+
+        .mousePosition {
+            color: red;
+            font-size: 20px;
+        }
+    </style>
+    <script src="../v6.13.0-dist/ol.js"></script>
+</head>
+
+<body>
+    <div id="map">
+    </div>
+    <div id="myposition"></div>
+    <form id='myproj'>
+        <label>Projection</label>
+        <select id="projection">
+            <option value="EPSG:4326">EPSG:4326</option>
+            <option value="EPSG:3857">EPSG:3857</option>
+        </select>
+        <label>Precision</label>
+        <input id="precision" type="number" min="0" max="12" value="6" />
+    </form>
+    <script type="text/javascript">
+        // 选取投影的控件
+        var projectionSelect = document.getElementById("projection"); 
+        projectionSelect.addEventListener('change', function (event) {
+            // 使mousePositionControl控件的投影与选取投影控件选取的投影一致
+            mousePositionControl.setProjection(event.target.value);
+        });
+
+        var precisionInput = document.getElementById('precision');
+        precisionInput.addEventListener('change', function (event) {
+            // 设置mousePositionControl控件的坐标格式
+            var format = ol.coordinate.createStringXY(event.target.valueAsNumber);
+            mousePositionControl.setCoordinateFormat(format);
+        });
+
+        //定义坐标系
+        let projParam = 'EPSG:4326' //EPSG:3857
+
+        //定义鼠标位置控件对象
+        var mousePositionControl = new ol.control.MousePosition({
+            className: 'mousePosition',
+            coordinateFormat: ol.coordinate.createStringXY(6),
+            projection: 'EPSG:4326',
+            target: document.getElementById('myposition'),
+            undefinedHTML: '&nbsp;'
+        });
+
+        //标准TMS切片加载方式
+        var offlineSource = new ol.source.XYZ({
+            tileUrlFunction: function (coordinate) {
+                console.log(coordinate[0], coordinate[1], coordinate[2]);
+                var z = coordinate[0];
+                var x = coordinate[1];
+                var y = Math.pow(2, z - 1) + coordinate[2];
+                return "file:///D:/maps/" + z + "/" + x + "/" + y + ".png";
+            },
+            maxZoom: 19,
+            minZoom: 0,
+            projection: projParam
+        });
+
+        //定义图层：地图
+        var offlineMapLayer = new ol.layer.Tile({
+            source: offlineSource
+        });
+
+        //定义图层：瓦片网格线
+        var tileGridLayer = new ol.layer.Tile({
+            source: new ol.source.TileDebug({
+                projection: projParam,
+                tileGrid: offlineSource.getTileGrid(),
+            })
+        });
+
+        //定义地图对象
+        var map = new ol.Map({
+            view: new ol.View({
+                center: [104.1, 30.6],
+                projection: projParam,
+                zoom: 7
+            }),
+            controls: ol.control.defaults().extend([mousePositionControl]),
+            target: 'map',
+            layers: [],
+        });
+
+        //将两个图层添加到地图对象里
+        map.addLayer(offlineMapLayer);
+        map.addLayer(tileGridLayer);
+    </script>
+
+
+</body>
+
+</html>

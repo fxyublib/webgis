@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../v6.13.0-dist/ol.css" />
+    <script src="../v6.13.0-dist/ol.js"></script>
+    <script src="http://lib.sinaapp.com/js/jquery/2.2.4/jquery-2.2.4.min.js"></script>
+    <style type="text/css">
+        body, html {
+            width: 100%;
+            height: 100%;
+        }
+        #map, #info {
+            width: 100%;
+            height: 80%;
+        }
+    </style>
+</head>
+<body>
+<div id="map"></div>
+<div id="info">
+    <table>
+        <tr>
+            <td>左上角:</td>
+            <td>经度：<input id="lon1" readonly=“readonly”/>纬度：<input id="lat1" readonly=“readonly”/></td>
+        </tr>
+        <tr>
+            <td>右下角:</td>
+            <td>经度：<input id="lon2" readonly=“readonly”/>纬度：<input id="lat2" readonly=“readonly”/></td>
+        </tr>
+        <tr><button id="btnclick" onclick="clickHandler()">开始框选</button></tr>
+    </table>
+ 
+</div>
+ 
+<script>
+    var style = new ol.style.Style({
+        fill: new ol.style.Fill({
+            color: 'rgba(96,96,96, 0.3)'
+        }),
+        stroke: new ol.style.Stroke({
+            color: 'rgba(96,96,96, 0.3)',
+            width: 2
+        }),
+        image: new ol.style.Circle({
+            radius: 5,
+            stroke: new ol.style.Stroke({
+                color: 'rgba(96,96,96, 0.3)'
+            }),
+            fill: new ol.style.Fill({
+                color: 'rgba(96,96,96, 0.3)'
+            })
+        })
+    });
+
+    map = new ol.Map({
+        target: 'map',
+        layers: [
+            new ol.layer.Tile({
+                source: new ol.source.OSM()
+            })
+        ],
+        view: new ol.View({
+            center: ol.proj.transform([104.1, 30.6], 'EPSG:4326', 'EPSG:3857'),
+            zoom: 9
+        })
+    });
+ 
+    var layer = new ol.layer.Vector({
+        source: new ol.source.Vector(),
+        style: style
+    });
+ 
+    var draw = new ol.interaction.Draw({
+        source: layer.getSource(),
+        type: 'Circle',
+        style: style,
+        geometryFunction: ol.interaction.Draw.createBox()
+    });
+ 
+    function clickHandler(e1) {
+ 
+        $('#map').bind("click", function (e) {
+ 
+            var pointermove = $('#map').bind("pointermove", function (e2) {
+                var coordinate = ol.proj.transform(map.getEventCoordinate(e2), 'EPSG:3857', 'EPSG:4326');
+                $("#lon2").attr("value", coordinate[0].toFixed(6));
+                $("#lat2").attr("value", coordinate[1].toFixed(6));
+ 
+            }).bind("click", function () {
+                $("#map").off('pointermove');
+                $("#map").off('click');
+            });
+ 
+            if ($("#lon1").val() == "" && $("#lat1").val() == "") {
+                var coordinate = ol.proj.transform(map.getEventCoordinate(e), 'EPSG:3857', 'EPSG:4326');
+                $("#lon1").attr("value", coordinate[0].toFixed(6));
+                $("#lat1").attr("value", coordinate[1].toFixed(6));
+            }
+        });
+ 
+        if ("取消框选" == ($("#btnclick").text())) {
+            $("#btnclick").text("开始框选");
+            $("input").attr("value", "");
+            layer.getSource().clear();
+            map.removeLayer(layer);
+        } else {
+            $("#btnclick").text("取消框选");
+            map.addInteraction(draw);
+        }
+    }
+ 
+    draw.on('drawend', function () {
+        map.addLayer(layer);
+        map.removeInteraction(draw);
+    });
+ 
+</script>
+</body>
+</html>
