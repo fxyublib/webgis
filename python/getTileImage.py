@@ -23,6 +23,7 @@ def downloadImage(img_url, fname, mylog):
 
 def downloadImage2(img_url, fname, mylog):
     agents = [
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36',
     'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.101 Safari/537.36',
     'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit/532.5 (KHTML, like Gecko) Chrome/4.0.249.0 Safari/532.5',
     'Mozilla/5.0 (Windows; U; Windows NT 5.2; en-US) AppleWebKit/532.9 (KHTML, like Gecko) Chrome/5.0.310.0 Safari/532.9',
@@ -32,27 +33,30 @@ def downloadImage2(img_url, fname, mylog):
     'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit/534.20 (KHTML, like Gecko) Chrome/11.0.672.2 Safari/534.20', 
     'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534.27 (KHTML, like Gecko) Chrome/12.0.712.0 Safari/534.27',
     'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/13.0.782.24 Safari/535.1']
+
+    bytes = bytearray()
     try:
         req = urllib.request.Request(img_url)
         req.add_header('User-Agent', random.choice(agents))
         response = urllib.request.urlopen(req)
         bytes = response.read()
+
     except Exception as e:
-        print("--", fname, "->", e)
+        print("-- error", fname, "->", e)
         print(img_url, file=mylog)
-        sys.exit(1)
-    
-    if bytes.startswith(b"<html>"):
+        # sys.exit(1)
+        return
+
+    if bytes == None or len(bytes) == 0 or bytes.startswith(b"<html>"):
         print("-- forbidden", fname)
         print(img_url, file=mylog)
-        sys.exit(1)
-    
-    print("-- saving", fname)
-    
+        # sys.exit(1)
+        return
+            
     f = open(fname,'wb')
     f.write(bytes)
     f.close()
-    
+    print("-- saving", fname)
     #time.sleep(1 + random.random())
 
 # 切片行列号反算经纬度
@@ -73,7 +77,7 @@ def deg2num(lat_deg, lon_deg, zoom):
 
 def getImageUrl(x, y, zoom):
     #Google影像瓦片
-    img_url = 'http://mt2.google.cn/vt/lyrs=y&hl=zh-CN&gl=CN&src=app&x='+str(x)+'&y='+str(y)+'&z='+str(zoom)+'&s=G'
+    img_url = 'http://mt'+str(random.randint(0,3))+'.google.cn/vt/lyrs=y&hl=zh-CN&gl=CN&src=app&x='+str(x)+'&y='+str(y)+'&z='+str(zoom)+'&s=G'
     # img_url = 'http://mt2.google.cn/vt/lyrs=y&hl=zh-CN&gl=CN&src=app&x='+str(x)+'&y='+str(y)+'&z='+str(zoom)+'&s=G'
     #谷歌卫星地图
     #http://mt3.google.cn/vt/lyrs=s&hl=zh-CN&gl=cn&x={x}&y={y}&z={z}
@@ -99,10 +103,10 @@ def getImageUrl(x, y, zoom):
     # 也可以进行组合，例如：s,r 或者 t,h http://mt3.google.cn/vt/lyrs=t,h&hl=zh-CN&gl=cn&x=420&y=193&z=9
 
     #高德瓦片，wprd03想必是和谷歌一样，有多个服务器提供服务。测试下来可以取到01 到 04。
-    img_url = 'https://wprd01.is.autonavi.com/appmaptile?x={x}&y={y}&z={z}&style=6'.format(x=x, y=y, z=zoom)
+    # img_url = 'https://wprd01.is.autonavi.com/appmaptile?x={x}&y={y}&z={z}&style=6'.format(x=x, y=y, z=zoom)
     #img_url = 'https://wprd01.is.autonavi.com/appmaptile?x={x}&y={y}&z={z}&lang=zh_cn&size=1&scl=1&style=7&ltype=0'.format(x=x, y=y, z=zoom)
-    img_url = 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'.format(x=x, y=y, z=zoom)
-    img_url = 'https://map.geoq.cn/ArcGIS/rest/services/ChinaOnlineCommunity/MapServer/tile//{z}/{y}/{x}'.format(x=x, y=y, z=zoom)
+    # img_url = 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'.format(x=x, y=y, z=zoom)
+    # img_url = 'https://map.geoq.cn/ArcGIS/rest/services/ChinaOnlineCommunity/MapServer/tile//{z}/{y}/{x}'.format(x=x, y=y, z=zoom)
                
     #天地图-地图
     #img_url = 'http://t4.tianditu.com/DataServer?T=vec_w&x='+str(x)+'&y='+str(y)+'&l='+str(zoom)+'&tk=45c78b2bc2ecfa2b35a3e4e454ada5ce'
@@ -198,15 +202,15 @@ def downloadMapAllImage(file_path, zoom, params):
 
 if __name__ == '__main__':
     starttime = datetime.datetime.now()
-    file_path='d:/maps11'
+    file_path='d:/test/maps_google_y'
 
     # (1) 全球地图
-    zoom = 4
+    zoom = 7
     params = [0, 0, pow(2, zoom), pow(2, zoom)]
 
     # (2) 中国地图
-    zoom = 5
-    params = [22, 10, 6, 6]
+    # zoom = 6
+    # params = [22, 10, 6, 6]
 
     # (3) 局部地图
     # zoom = 18
