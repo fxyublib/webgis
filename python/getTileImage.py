@@ -187,12 +187,11 @@ def downloadMapAllImage(file_path, zoom, params):
         for y in range(ymin, ymax):
 
             img_url = getImageUrl(x, y, zoom)
-            print(img_url)
-            
             img_savepath = getAndCheckImageFilePath(file_path, x, y, zoom)
-            print(img_savepath)
-
+            
             if not os.path.exists(img_savepath):
+                print(img_url)
+                print(img_savepath)
                 #downloadImage(img_url, img_savepath, mylog)     
                 downloadImage2(img_url, img_savepath, mylog)
 
