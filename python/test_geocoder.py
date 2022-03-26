@@ -39,6 +39,16 @@ import requests
 # print("**************************************")
 # print("【经纬度转地址】：", ret)
 
+# import requests
+# def geocoding(addr):
+#     key="f247cdb592eb43ebac6ccd27f796e2d2"
+#     url= f'http://api.map.baidu.com/geocoder?address={addr}&output=json&key={key}'
+#     hjson=requests.get(url).json()
+#     lng = hjson['result']['location']['lng'] # 经度
+#     lat = hjson['result']['location']['lat'] # 纬度
+#     #lng_lat = [lng, lat]
+#     #因为要用于UDF，所以这里返回字符串而非列表
+#     return f"{lng},{lat}"
 
 from geopy.geocoders import Nominatim
 from geopy.extra.rate_limiter import RateLimiter
