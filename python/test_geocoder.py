@@ -106,8 +106,42 @@ from geopy.extra.rate_limiter import RateLimiter
 # print(g.postal)
 # print(g.street)
 
+# import geocoder
+# g = geocoder.osm("Harvard University")
+# print(g.bbox)
+# # print(g.geojson['bbox'])
+# print(g.southwest)
+
+# import requests
+ 
+# url = 'https://nominatim.openstreetmap.org/search.php?q=哈佛大学&format=jsonv2'
+# response = requests.get(url)
+# print(response.text)
+# # print(response.json())
+# print(type(response.status_code), response.status_code)
+# print(type(response.headers), response.headers)
+# print(type(response.cookies), response.cookies)
+# print(type(response.url), response.url)
+# print(type(response.history), response.history)
+
+# import requests
+
+# url = 'https://nominatim.openstreetmap.org/reverse.php?lat=42.36790855&lon=-71.12678237443698&zoom=18&format=jsonv2'
+# response = requests.get(url)
+# print(response.text)
+# print(response.json())
+
+# import requests
+# url = 'https://nominatim.openstreetmap.org/search.php'
+# params = {'q': '哈佛大学', 'format': 'jsonv2'}
+# response = requests.get(url, params=params)
+# print(response.text)
+
+# import requests
+# url = 'https://nominatim.openstreetmap.org/reverse.php'
+# params = {'lat': '42.36790855', 'lon': '-71.12678237443698', 'format': 'jsonv2'}
+# response = requests.get(url, params=params)
+# print(response.text)
+
 import geocoder
-g = geocoder.osm("Harvard University")
-print(g.bbox)
-# print(g.geojson['bbox'])
-print(g.southwest)
+print(dir(geocoder))
