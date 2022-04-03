@@ -1,0 +1,10 @@
+3rd Party Licenses:
+
+* Code Project Open License (CPOL) 1.02
+  http://www.codeproject.com/info/cpol10.aspx
+
+  
+* The "DPInst.exe" application is subject to the license terms defined in the 
+Microsoft Windows Driver Kit 8.0
+
+
